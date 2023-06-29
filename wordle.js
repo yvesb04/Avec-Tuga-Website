@@ -63,6 +63,7 @@ async function init() {
           letters[rowNumber * ANSWER_LENGTH + i].classList.add(
             "letter-correct"
           );
+          letterMap.set(currentWord[i], letterMap.get(currentWord[i]) - 1);
         }
       }
 
@@ -78,7 +79,7 @@ async function init() {
 
         for (let i = 0; i < 5; i++) {
           if (currentWord[i] == wordOfDay[i]) {
-            letterMap.set(currentWord[i], letterMap.get(currentWord[i]) - 1);
+            //NADA
           } else if (
             letterMap.has(currentWord[i]) &&
             letterMap.get(currentWord[i]) > 0
@@ -101,7 +102,7 @@ async function init() {
 
       if (rowNumber === NUM_ANSWERS) {
         gameOver = true;
-        alert("GAME FUCKING OVER BRO, BETTER LUCK NEXT TIME :P");
+        alert(`GAME OVER, THE WORD WAS "${wordOfDay}"`);
       }
     }
   }
