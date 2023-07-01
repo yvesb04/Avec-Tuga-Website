@@ -46,15 +46,21 @@ async function init() {
 
       if (!wordIsValid) {
         for (let i = 0; i < 5; i++) {
-          letterNow = letters[rowNumber * ANSWER_LENGTH + i];
-          letterNow.classList.remove("invalid-letter");
-          setTimeout(function () {
-            letters[rowNumber * ANSWER_LENGTH + i].classList.add(
-              "invalid-letter"
-            );
-          }, 10);
+          let currentLetter = letters[rowNumber * ANSWER_LENGTH + i];
+          currentLetter.classList.add("invalid-letter");
+          
+          setTimeout(function(letter) {
+            return function() {
+              letter.classList.remove("invalid-letter");
+            }
+          }(currentLetter), 820);
         }
         return;
+      }
+
+      const letterMap = new Map();
+      for (const letter of wordOfDay) {
+        letterMap.set(letter, (letterMap.get(letter) || 0) + 1);
       }
 
       //Check first for correct
@@ -72,10 +78,6 @@ async function init() {
         gameOver = true;
       } else {
         //Check if word exists and identify words colors
-        const letterMap = new Map();
-        for (const letter of wordOfDay) {
-          letterMap.set(letter, (letterMap.get(letter) || 0) + 1);
-        }
 
         for (let i = 0; i < 5; i++) {
           if (currentWord[i] == wordOfDay[i]) {
@@ -106,18 +108,31 @@ async function init() {
       }
     }
   }
-  function handleBackSpace(backspace) {
+  function handleBackSpace() {
     if (currentWord != "") {
       currentWord = currentWord.slice(0, -1);
       letters[rowNumber * ANSWER_LENGTH + currentWord.length].innerHTML = "";
+      letters[rowNumber * ANSWER_LENGTH + currentWord.length].classList.remove(
+        "letter-selected"
+      );
     }
   }
   function handleLetter(letter) {
     if (currentWord.length < ANSWER_LENGTH) {
       currentWord += letter;
-      letters[rowNumber * ANSWER_LENGTH + currentWord.length - 1].innerHTML =
+      currentLetter = letters[rowNumber * ANSWER_LENGTH + currentWord.length - 1];
+      currentLetter.innerHTML =
         letter;
-      console.log(letters);
+
+      currentLetter.classList.add(
+        "letter-selected"
+      );
+
+      setTimeout(function(letter) {
+        return function() {
+          letter.classList.remove("letter-selected");
+        }
+      }(currentLetter), 50);
     }
   }
 }
