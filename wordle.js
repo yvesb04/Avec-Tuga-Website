@@ -13,8 +13,6 @@ async function init() {
   const wordJSON = await wordAPI.json();
   const wordOfDay = wordJSON.word;
 
-  console.log(wordOfDay);
-
   document.addEventListener("keyup", function (event) {
     if (gameOver) {
       return;
@@ -28,7 +26,6 @@ async function init() {
     } else if (isLetter(letter) == true) {
       handleLetter(letter);
     }
-    console.log(currentWord);
   });
 
   async function handleEnter() {
