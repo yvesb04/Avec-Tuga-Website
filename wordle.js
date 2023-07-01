@@ -48,12 +48,15 @@ async function init() {
         for (let i = 0; i < 5; i++) {
           let currentLetter = letters[rowNumber * ANSWER_LENGTH + i];
           currentLetter.classList.add("invalid-letter");
-          
-          setTimeout(function(letter) {
-            return function() {
-              letter.classList.remove("invalid-letter");
-            }
-          }(currentLetter), 820);
+
+          setTimeout(
+            (function (letter) {
+              return function () {
+                letter.classList.remove("invalid-letter");
+              };
+            })(currentLetter),
+            820
+          );
         }
         return;
       }
@@ -66,8 +69,13 @@ async function init() {
       //Check first for correct
       for (let i = 0; i < 5; i++) {
         if (currentWord[i] == wordOfDay[i]) {
-          letters[rowNumber * ANSWER_LENGTH + i].classList.add(
-            "letter-correct"
+          setTimeout(
+            (function (letter) {
+              return function () {
+                letter.classList.add("letter-correct");
+              };
+            })(letters[rowNumber * ANSWER_LENGTH + i]),
+            82 * i
           );
           letterMap.set(currentWord[i], letterMap.get(currentWord[i]) - 1);
         }
@@ -86,13 +94,23 @@ async function init() {
             letterMap.has(currentWord[i]) &&
             letterMap.get(currentWord[i]) > 0
           ) {
-            letters[rowNumber * ANSWER_LENGTH + i].classList.add(
-              "letter-present"
+            setTimeout(
+              (function (letter) {
+                return function () {
+                  letter.classList.add("letter-present");
+                };
+              })(letters[rowNumber * ANSWER_LENGTH + i]),
+              82 * i
             );
             letterMap.set(currentWord[i], letterMap.get(currentWord[i]) - 1);
           } else {
-            letters[rowNumber * ANSWER_LENGTH + i].classList.add(
-              "letter-wrong"
+            setTimeout(
+              (function (letter) {
+                return function () {
+                  letter.classList.add("letter-wrong");
+                };
+              })(letters[rowNumber * ANSWER_LENGTH + i]),
+              82 * i
             );
           }
         }
@@ -120,19 +138,20 @@ async function init() {
   function handleLetter(letter) {
     if (currentWord.length < ANSWER_LENGTH) {
       currentWord += letter;
-      currentLetter = letters[rowNumber * ANSWER_LENGTH + currentWord.length - 1];
-      currentLetter.innerHTML =
-        letter;
+      currentLetter =
+        letters[rowNumber * ANSWER_LENGTH + currentWord.length - 1];
+      currentLetter.innerHTML = letter;
 
-      currentLetter.classList.add(
-        "letter-selected"
+      currentLetter.classList.add("letter-selected");
+
+      setTimeout(
+        (function (letter) {
+          return function () {
+            letter.classList.remove("letter-selected");
+          };
+        })(currentLetter),
+        50
       );
-
-      setTimeout(function(letter) {
-        return function() {
-          letter.classList.remove("letter-selected");
-        }
-      }(currentLetter), 50);
     }
   }
 }
