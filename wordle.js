@@ -1,7 +1,7 @@
 const ANSWER_LENGTH = 5;
 const NUM_ANSWERS = 6;
 const letters = document.querySelectorAll(".game-word");
-const keys = document.querySelectorAll(".keyboard");
+const keys = document.querySelector(".keyboard");
 
 async function init() {
   let rowNumber = 0;
@@ -29,11 +29,15 @@ async function init() {
     } else if (isLetter(letter) == true) {
       handleLetter(letter);
     }
-    console.log(currentWord);
   });
 
-  document.addEventListener("click", function (event) {
-    pressed = event.target.innerHTML;
+  keys.addEventListener("click", function (event) {
+    if (!event.target.classList.contains("key")) {
+      return;
+    }
+
+    let pressed = event.target.textContent;
+
     if (pressed == "ENTER") {
       handleEnter();
     } else if (pressed == "DEL") {
@@ -98,10 +102,10 @@ async function init() {
         gameOver = true;
       } else {
         //Check if word exists and identify words colors
-
+        let keyColor;
         for (let i = 0; i < 5; i++) {
           if (currentWord[i] == wordOfDay[i]) {
-            //NADA
+            keyColor = "#538d4e";
           } else if (
             letterMap.has(currentWord[i]) &&
             letterMap.get(currentWord[i]) > 0
@@ -114,7 +118,10 @@ async function init() {
               })(letters[rowNumber * ANSWER_LENGTH + i]),
               250 * i
             );
+
             letterMap.set(currentWord[i], letterMap.get(currentWord[i]) - 1);
+
+            keyColor = "#b59f3b";
           } else {
             setTimeout(
               (function (letter) {
@@ -124,7 +131,23 @@ async function init() {
               })(letters[rowNumber * ANSWER_LENGTH + i]),
               250 * i
             );
+
+            keyColor = "#3a3a3c";
           }
+
+          setTimeout(
+            (function (letter, color) {
+              return function () {
+                keyboardKeysColor(letter.toUpperCase(), color);
+              };
+            })(currentWord[i], keyColor),
+            2000
+          );
+          let delay = 500 * i;
+          let whatLetter = currentWord[i].toUpperCase();
+          setTimeout(function () {
+            keyboardKeysColor(whatLetter, keyColor);
+          }, delay);
         }
 
         //Go next line
@@ -164,6 +187,22 @@ async function init() {
         })(currentLetter),
         50
       );
+    }
+  }
+}
+
+function keyboardKeysColor(letter, color) {
+  console.log(letter, color);
+  const elements = document.querySelectorAll(".key");
+  for (const element of elements) {
+    if (element.innerHTML == letter) {
+      if (element.style.backgroundColor == "#538d4e") {
+        return;
+      }
+      if (element.style.backgroundColor == "#b59f3b" && color != "#538d4e") {
+        return;
+      }
+      element.style.backgroundColor = color;
     }
   }
 }
